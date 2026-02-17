@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL;
 
 public class Launcher implements Runnable {
     @Override
@@ -37,13 +38,21 @@ public class Launcher implements Runnable {
         GLFWVidMode vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 
         // sets window to middle of the screen
-        GLFW.glfwSetWindowPos(window, (vidMode.width() - windowWidth) / 2, (vidMode.height() - windowHeight) / 2);
+        if (vidMode != null) {
+            GLFW.glfwSetWindowPos(window, (vidMode.width() - windowWidth) / 2, (vidMode.height() - windowHeight) / 2);
+        }
 
         // Makes the OpenGL context of this window current on the calling thread so OpenGL commands affect this window
         GLFW.glfwMakeContextCurrent(window);
 
+        // Loads OpenGL functions for the current window context.
+        GL.createCapabilities();
+
         // show the window
         GLFW.glfwShowWindow(window);
+
+        // Enable v-Sync
+        GLFW.glfwSwapInterval(GLFW.GLFW_TRUE);
 
         // sets key callback, when ESC is pressed, window closes
         GLFW.glfwSetKeyCallback(window, (win, key, scancode, action, mods) -> {
@@ -51,14 +60,18 @@ public class Launcher implements Runnable {
                 GLFW.glfwSetWindowShouldClose(win, true);
             }
         });
-
-        // updates window
+        int i = 0;
+        // updates window when it shouldn't close
         while(!GLFW.glfwWindowShouldClose(window)){
             // Calls an update function (as its name suggests it updates what is displayed on the window )
             update(window);
 
             // Checks for user input and window events (like key presses or close requests) and processes them
             GLFW.glfwPollEvents();
+
+            // Swaps the back buffer with the front buffer.
+            // Shows what was just rendered on the screen (prevents flickering).
+            GLFW.glfwSwapBuffers(window);
         }
 
         // "Destroys" window and frees resources
@@ -69,14 +82,18 @@ public class Launcher implements Runnable {
     }
 
     private void update(long window){
-        int[] w = new int[1];
-        int[] h = new int[1];
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-        GLFW.glfwGetFramebufferSize(window, w, h);
 
-        int width = w[0];
-        int height = h[0];
+//        int[] w = new int[1];
+//        int[] h = new int[1];
+//
+//        GLFW.glfwGetFramebufferSize(window, w, h);
+//
+//        int width = w[0];
+//        int height = h[0];
 
 //        GL11.glViewport(0, 0, width, height);
+
     }
 }
