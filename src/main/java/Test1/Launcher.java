@@ -70,11 +70,7 @@ public class Launcher implements Runnable {
 
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-            GL11.glBegin(GL11.GL_TRIANGLES);
-            GL11.glVertex2f(0.0f, 0.5f);
-            GL11.glVertex2f(-0.5f, -0.5f);
-            GL11.glVertex2f(0.5f, -0.5f);
-            GL11.glEnd();
+            drawTriangle();
 
             // Checks for user input and window events (like key presses or close requests) and processes them
             GLFW.glfwPollEvents();
@@ -93,5 +89,29 @@ public class Launcher implements Runnable {
 
     private void update(long window){
 
+    }
+
+    private void drawTriangle(){
+        GL11.glBegin(GL11.GL_TRIANGLES);
+        GL11.glColor4f(1,0,0,0);
+        GL11.glVertex2f(0.0f, 0.5f);
+        GL11.glColor4f(0,1,0,0);
+        GL11.glVertex2f(-0.5f, -0.5f);
+        GL11.glColor4f(0,0,1,0);
+        GL11.glVertex2f(0.5f, -0.5f);
+        GL11.glEnd();
+    }
+
+    private void drawQuad(){
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glColor4f(1,0,0,0);
+
+        GL11.glVertex2f(-1f, 1f);
+        GL11.glVertex2f(1f, 1f);
+
+        GL11.glColor4f(0,0,0,0);
+        GL11.glVertex2f(0.5f, -0.5f);
+        GL11.glVertex2f(-0.5f, -0.5f);
+        GL11.glEnd();
     }
 }
