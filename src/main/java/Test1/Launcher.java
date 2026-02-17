@@ -25,7 +25,9 @@ public class Launcher implements Runnable {
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 3);
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
         // Requests the *core profile*
-        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
+//        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
+        // Requests *any profile*
+        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_ANY_PROFILE);
 
         long window = GLFW.glfwCreateWindow(windowWidth, windowHeight, "Render Engine", 0, 0);
 
@@ -60,11 +62,19 @@ public class Launcher implements Runnable {
                 GLFW.glfwSetWindowShouldClose(win, true);
             }
         });
-        int i = 0;
+
         // updates window when it shouldn't close
         while(!GLFW.glfwWindowShouldClose(window)){
             // Calls an update function (as its name suggests it updates what is displayed on the window )
-            update(window);
+//            update(window);
+
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+
+            GL11.glBegin(GL11.GL_TRIANGLES);
+            GL11.glVertex2f(0.0f, 0.5f);
+            GL11.glVertex2f(-0.5f, -0.5f);
+            GL11.glVertex2f(0.5f, -0.5f);
+            GL11.glEnd();
 
             // Checks for user input and window events (like key presses or close requests) and processes them
             GLFW.glfwPollEvents();
@@ -82,18 +92,6 @@ public class Launcher implements Runnable {
     }
 
     private void update(long window){
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-
-
-//        int[] w = new int[1];
-//        int[] h = new int[1];
-//
-//        GLFW.glfwGetFramebufferSize(window, w, h);
-//
-//        int width = w[0];
-//        int height = h[0];
-
-//        GL11.glViewport(0, 0, width, height);
 
     }
 }
