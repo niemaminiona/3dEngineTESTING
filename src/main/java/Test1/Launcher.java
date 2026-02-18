@@ -52,6 +52,24 @@ public class Launcher implements Runnable {
         // Loads OpenGL functions for the current window context.
         GL.createCapabilities();
 
+        float[] verticies1 = new float[]{
+            -0.5f,-0.5f, 0,
+             0, 0.5f, 0,
+             0.5f,-0.5f, 0
+        };
+
+        float[] verticies2 = new float[]{
+                -0.45f,0.5f, 0,
+                0.5f, 0.5f, 0,
+                0.5f,-0.5f, 0,
+
+                0.5f,-0.5f, 0,
+                -0.5f, -0.5f, 0,
+                -0.5f,0.5f, 0,
+        };
+
+        Model model = new Model(verticies2);
+
         // show the window
         GLFW.glfwShowWindow(window);
 
@@ -65,12 +83,6 @@ public class Launcher implements Runnable {
             }
         });
 
-        float direction = 1f;
-        float speed = 0.002f;
-        float distance = 0.5f;
-        float x3 = 0.5f;
-        float x2 = -0.5f;
-
         // updates window when it shouldn't close
         while(!GLFW.glfwWindowShouldClose(window)){
             // Calls an update function (as its name suggests it updates what is displayed on the window )
@@ -78,20 +90,8 @@ public class Launcher implements Runnable {
 
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-            GL11.glBegin(GL11.GL_TRIANGLES);
+            model.render();
 
-            x3 += speed * direction;
-            x2 += speed * -direction;
-
-            if (x3 > distance) {
-                direction = -1f;
-            }
-            if (x3 < -distance) {
-                direction = 1f;
-            }
-            drawTriangle(-0.0f,0.5f,x2,-0.5f,x3,-0.5f);
-
-            GL11.glEnd();
             // Checks for user input and window events (like key presses or close requests) and processes them
             GLFW.glfwPollEvents();
 
@@ -111,27 +111,27 @@ public class Launcher implements Runnable {
 
     }
 
-    private void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3){
-        GL11.glColor4f(1,0,0,0);
-        GL11.glVertex2f(x1, y1);
+//    private void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3){
+//        GL11.glColor4f(1,0,0,0);
+//        GL11.glVertex2f(x1, y1);
+//
+//        GL11.glColor4f(0,1,0,0);
+//        GL11.glVertex2f(x2, y2);
+//
+//        GL11.glColor4f(0,0,1,0);
+//        GL11.glVertex2f(x3, y3);
+//    }
 
-        GL11.glColor4f(0,1,0,0);
-        GL11.glVertex2f(x2, y2);
-
-        GL11.glColor4f(0,0,1,0);
-        GL11.glVertex2f(x3, y3);
-    }
-
-    private void drawQuad(){
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glColor4f(1,0,0,0);
-
-        GL11.glVertex2f(-1f, 1f);
-        GL11.glVertex2f(1f, 1f);
-
-        GL11.glColor4f(0,0,0,0);
-        GL11.glVertex2f(0.5f, -0.5f);
-        GL11.glVertex2f(-0.5f, -0.5f);
-        GL11.glEnd();
-    }
+//    private void drawQuad(){
+//        GL11.glBegin(GL11.GL_QUADS);
+//        GL11.glColor4f(1,0,0,0);
+//
+//        GL11.glVertex2f(-1f, 1f);
+//        GL11.glVertex2f(1f, 1f);
+//
+//        GL11.glColor4f(0,0,0,0);
+//        GL11.glVertex2f(0.5f, -0.5f);
+//        GL11.glVertex2f(-0.5f, -0.5f);
+//        GL11.glEnd();
+//    }
 }
