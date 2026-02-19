@@ -110,28 +110,4 @@ public class Launcher implements Runnable {
     private void update(long window){
 
     }
-
-//    private void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3){
-//        GL11.glColor4f(1,0,0,0);
-//        GL11.glVertex2f(x1, y1);
-//
-//        GL11.glColor4f(0,1,0,0);
-//        GL11.glVertex2f(x2, y2);
-//
-//        GL11.glColor4f(0,0,1,0);
-//        GL11.glVertex2f(x3, y3);
-//    }
-
-//    private void drawQuad(){
-//        GL11.glBegin(GL11.GL_QUADS);
-//        GL11.glColor4f(1,0,0,0);
-//
-//        GL11.glVertex2f(-1f, 1f);
-//        GL11.glVertex2f(1f, 1f);
-//
-//        GL11.glColor4f(0,0,0,0);
-//        GL11.glVertex2f(0.5f, -0.5f);
-//        GL11.glVertex2f(-0.5f, -0.5f);
-//        GL11.glEnd();
-//    }
 }
