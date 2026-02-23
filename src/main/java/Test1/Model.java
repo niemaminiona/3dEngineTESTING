@@ -20,9 +20,19 @@ public class Model {
     // OpenGL ID of the vertex buffer
     private int v_id;
 
+    private float[] vertices;
+
     // Constructor receives an array of vertex positions (x, y, z, x, y, z, ...)
     public Model(float[] vertices) {
+        this.vertices = vertices;
 
+        // Generate a new VBO and store its ID
+        v_id = GL15.glGenBuffers();
+
+        uploadVertexData();
+    }
+
+    private void uploadVertexData(){
         // Each vertex has 3 floats → total vertices = length / 3
         draw_count = vertices.length / 3;
 
@@ -34,9 +44,6 @@ public class Model {
 
         // Prepare the buffer for reading by OpenGL
         buffer.flip();
-
-        // Generate a new VBO and store its ID
-        v_id = GL15.glGenBuffers();
 
         // Bind the VBO as the current array buffer
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, v_id);
@@ -69,5 +76,11 @@ public class Model {
 
         // Disable vertex array functionality
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+    }
+
+    public void setVertices(float[] vertices){
+        this.vertices = vertices;
+
+        uploadVertexData();
     }
 }
