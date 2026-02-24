@@ -1,68 +1,70 @@
 package Test2;
 
-// LWJGL utility for creating native buffers
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
-// Represents a 3D model stored in a Vertex Buffer Object (VBO)
 public class Model {
-
-    // Number of vertices to draw
     private final int draw_count;
-
-    // OpenGL ID of the vertex buffer
     private final int v_id;
+    private final int i_id;
 
-    // Constructor receives an array of vertex positions (x, y, z, x, y, z, ...)
-    public Model(float[] vertices) {
-        // Generate a new VBO and store its ID
+    public Model(float[] vertices, int[] indices) {
+//        draw_count = vertices.length / 3;
+        draw_count = indices.length;
+
         v_id = GL15.glGenBuffers();
+        setVertices(vertices);
 
-        // Each vertex has 3 floats → total vertices = length / 3
-        draw_count = vertices.length / 3;
+        i_id = GL15.glGenBuffers();
+        setIndices(indices);
+    }
 
-        // Create a native FloatBuffer to send data to OpenGL
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(vertices.length);
+    public void render() {
+        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 
-        // Copy the vertex array into the buffer
-        buffer.put(vertices);
-
-        // Prepare the buffer for reading by OpenGL
-        buffer.flip();
-
-        // Bind the VBO as the current array buffer
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, v_id);
+        GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
 
-        // Upload vertex data to the GPU (STATIC = won't change often)
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, i_id);
 
-        // Unbind the VBO to avoid accidental modification
+        GL11.glDrawElements(GL11.GL_TRIANGLES, draw_count, GL11.GL_UNSIGNED_INT, 0);
+//        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, draw_count);
+
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+
+        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+    }
+
+    private FloatBuffer createFloatBuffer(float[] data){
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
+        buffer.put(data);
+        buffer.flip();
+        return buffer;
+    }
+
+    private IntBuffer createIntBuffer(int[] data){
+        IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
+        buffer.put(data);
+        buffer.flip();
+        return buffer;
+    }
+
+    public void setVertices(float[] data){
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, v_id);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, createFloatBuffer(data), GL15.GL_STATIC_DRAW);
+
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
-    // Draw the model
-    public void render() {
-        // Enable vertex array functionality (old OpenGL fixed pipeline)
-        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+    public void setIndices(int[] data){
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, i_id);
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, createIntBuffer(data),GL15.GL_STATIC_DRAW);
 
-        // Bind our VBO so OpenGL uses its data
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, v_id);
-
-        // Tell OpenGL how vertex data is laid out:
-        // 3 values per vertex (x, y, z), type = float, tightly packed, start at offset 0
-        GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-
-        // Draw the vertices as triangles starting from index 0
-        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, draw_count);
-
-        // Unbind the VBO after drawing
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-
-        // Disable vertex array functionality
-        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 }
