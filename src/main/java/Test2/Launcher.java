@@ -6,6 +6,9 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 public class Launcher implements Runnable {
     @Override
     public void run() {
@@ -37,14 +40,15 @@ public class Launcher implements Runnable {
         GL.createCapabilities();
 
         float[] vertices = new float[]{
-                -0.5f,0.5f, 0,  // Top left      0
-                0.5f, 0.5f, 0,  // Top right     1
-                0.5f,-0.5f, 0,  // Bottom right  2
-                -0.5f,-0.5f,0,  // Bottom left   3
+                -0.25f,0.225f, 0,  // Top left      0
+                0.25f, 0.25f, 0,  // Top right     1
+                0.25f,-0.25f, 0,  // Bottom right  2
+                -0.25f,-0.25f,0,  // Bottom left   3
         };
 
         int[] indices = new int[]{
-                0, 1, 2
+                0, 1, 2,
+                2, 3, 0,
         };
 
         Model model = new Model(vertices, indices);
@@ -61,21 +65,14 @@ public class Launcher implements Runnable {
             }
         });
 
-        int angle = 0;
+        float angle = 0;
 
         while(!GLFW.glfwWindowShouldClose(window)){
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-            angle++;
-            vertices[0] = (float)Math.sin(Math.toRadians(angle)) * 0.5f;
-            vertices[1] = (float)Math.cos(Math.toRadians(angle)) * 0.5f;
 
-            vertices[3] = (float)Math.sin(Math.toRadians(angle + 90)) * 0.5f;
-            vertices[4] = (float)Math.cos(Math.toRadians(angle + 90)) * 0.5f;
+            model.setVertices(rotateTriangles(vertices, angle));
 
-            vertices[6] = (float)Math.sin(Math.toRadians(angle + 270)) * 0.5f;
-            vertices[7] = (float)Math.cos(Math.toRadians(angle + 270)) * 0.5f;
-            model.setVertices(vertices);
-
+            angle += 0.1f;
             model.render();
 
             GLFW.glfwPollEvents();
@@ -86,4 +83,27 @@ public class Launcher implements Runnable {
         GLFW.glfwDestroyWindow(window);
         GLFW.glfwTerminate();
     }
+
+    private float[] rotateTriangles(float[] vertices, float angle) {
+
+        float rad = (float)Math.toRadians(angle);
+        float cos = (float)Math.cos(rad);
+        float sin = (float)Math.sin(rad);
+
+        float[] rotated = new float[vertices.length];
+
+        for (int i = 0; i < vertices.length; i += 3) {
+
+            float x = vertices[i];
+            float y = vertices[i + 1];
+            float z = vertices[i + 2];
+
+            rotated[i]     = x * cos - y * sin;
+            rotated[i + 1] = x * sin + y * cos;
+            rotated[i + 2] = z; // unchanged
+        }
+
+        return rotated;
+    }
+
 }
