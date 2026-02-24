@@ -1,9 +1,12 @@
-package Test2;
+package Test;
 
 // LWJGL utility for creating native buffers
-
 import org.lwjgl.BufferUtils;
+
+// OpenGL 1.1 functions (drawing, vertex arrays, constants)
 import org.lwjgl.opengl.GL11;
+
+// OpenGL 1.5 functions (VBOs / buffer objects)
 import org.lwjgl.opengl.GL15;
 
 import java.nio.FloatBuffer;
