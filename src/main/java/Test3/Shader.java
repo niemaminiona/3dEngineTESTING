@@ -3,19 +3,17 @@ package Test3;
 import org.lwjgl.opengl.GL20;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class Shader {
-    private int program;
-    private int vs; // Vertex Shader
-    private int fs; // Fragment Shader
+    private final int program;
 
     public Shader(String filename){
         program = GL20.glCreateProgram();
 
-        vs = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
+        // Vertex Shader
+        int vs = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
         GL20.glShaderSource(vs, readFile(filename + ".vs"));
         GL20.glCompileShader(vs);
 
@@ -24,7 +22,8 @@ public class Shader {
             System.exit(1);
         }
 
-        fs = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
+        // Fragment Shader
+        int fs = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
         GL20.glShaderSource(fs, readFile(filename + ".fs"));
         GL20.glCompileShader(fs);
 
@@ -39,11 +38,14 @@ public class Shader {
         GL20.glBindAttribLocation(program, 0, "vertices");
 
         GL20.glLinkProgram(program);
+
         if(GL20.glGetProgrami(program, GL20.GL_LINK_STATUS) != 1){
             System.err.println(GL20.glGetProgramInfoLog(program));
             System.exit(1);
         }
+
         GL20.glValidateProgram(program);
+
         if(GL20.glGetProgrami(program, GL20.GL_VALIDATE_STATUS) != 1){
             System.err.println(GL20.glGetProgramInfoLog(program));
             System.exit(1);
