@@ -56,6 +56,13 @@ public class Shader {
         GL20.glUseProgram(program);
     }
 
+    public void setUniform(String name, float value){
+        int location = GL20.glGetUniformLocation(program, name);
+        if(location != -1){
+            GL20.glUniform1f(location, value);
+        }
+    }
+
     private String readFile(String filename){
         StringBuilder string = new StringBuilder();
         BufferedReader br;
