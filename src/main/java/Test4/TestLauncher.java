@@ -57,7 +57,7 @@ public class TestLauncher implements Runnable {
 
         Model model = new Model(vertices, indices);
 
-        Shader shader = new Shader("shader1");
+        Shader shader = new Shader("shader2");
 
         GLFW.glfwShowWindow(window);
 
@@ -73,6 +73,7 @@ public class TestLauncher implements Runnable {
 
         float angle = 0;
         float green = 0.01f;
+        float greenChange = 0.01f;
 
         while(!GLFW.glfwWindowShouldClose(window)){
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -80,7 +81,10 @@ public class TestLauncher implements Runnable {
             model.setVertices(rotateTriangles(vertices, angle));
 
             angle += 0.25f;
-            green += 0.01f;
+            green += greenChange;
+            if(green <= 0f || green >= 1f ){
+                greenChange *= -1;
+            }
 
             shader.bind();
             shader.setUniform("red", 1);

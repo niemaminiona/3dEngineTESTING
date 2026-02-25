@@ -1,7 +1,7 @@
 package Test4;
 
 public class Main {
-    static void main() {
+    public static void main(String[] args) {
         // Starts Launcher in new thread
         new Thread(new TestLauncher()).start();
     }
