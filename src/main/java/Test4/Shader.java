@@ -1,4 +1,4 @@
-package Test3;
+package Test4;
 
 import org.lwjgl.opengl.GL20;
 

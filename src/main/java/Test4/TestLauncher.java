@@ -1,66 +1,64 @@
-package Test;
+package Test4;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 
-public class Launcher implements Runnable {
+public class TestLauncher implements Runnable {
     @Override
     public void run() {
         int windowWidth = 1600;
         int windowHeight = 900;
 
-        // Sets an error callback so GLFW errors are printed to stderr.
         GLFWErrorCallback.createPrint(System.err).set();
 
-        // Initializes the GLFW library.
-        // If initialization fails, the program stops with an error.
         if (!GLFW.glfwInit()){
             throw new IllegalStateException("Failed to initialize GLFW");
         }
 
-        // Requests an OpenGL context version 3.3 from the graphics driver.
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 3);
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
-        // Requests the *core profile*
-//        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
-        // Requests *any profile*
-//        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_ANY_PROFILE);
-        // Requests *compatible profile*
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_COMPAT_PROFILE);
 
         long window = GLFW.glfwCreateWindow(windowWidth, windowHeight, "Render Engine", 0, 0);
 
-        // Checks if the window creation failed (0 = NULL pointer).
         if(window == 0L){
             throw new IllegalStateException("Failed to create GLFW window");
         }
 
-        // Gets information about screen
         GLFWVidMode vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-
-        // sets window to middle of the screen
         if (vidMode != null) {
             GLFW.glfwSetWindowPos(window, (vidMode.width() - windowWidth) / 2, (vidMode.height() - windowHeight) / 2);
         }
 
-        // Makes the OpenGL context of this window current on the calling thread so OpenGL commands affect this window
         GLFW.glfwMakeContextCurrent(window);
-
-        // Loads OpenGL functions for the current window context.
         GL.createCapabilities();
 
+        float size = 0.1f;
+
         float[] vertices = new float[]{
-                -0.25f,-0.25f, 0,
-                0, 0.25f, 0,
-                0.25f,-0.25f, 0
+                -size,size, 0,  // Top left      0
+                size, size, 0,  // Top right     1
+                size,-size, 0,  // Bottom right  2
+                -size,-size,0,  // Bottom left   3
+
+                -size,size, 0,  // Top left      4
+                size, size, 0,  // Top right     5
+                size,-size, 0,  // Bottom right  6
+                -size,-size,0,  // Bottom left   7
         };
 
-        Model model = new Model(vertices);
+        int[] indices = new int[]{
+                0, 1, 2,
+                2, 3, 0,
+        };
 
-        // show the window
+        Model model = new Model(vertices, indices);
+
+        Shader shader = new Shader("shader1");
+
         GLFW.glfwShowWindow(window);
 
         // Enable v-Sync
@@ -73,24 +71,48 @@ public class Launcher implements Runnable {
             }
         });
 
-        // updates window when it shouldn't close
+        float angle = 0;
+
         while(!GLFW.glfwWindowShouldClose(window)){
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
+            model.setVertices(rotateTriangles(vertices, angle));
+
+            angle += 0.25f;
+
+            shader.bind();
+
             model.render();
 
-            // Checks for user input and window events (like key presses or close requests) and processes them
             GLFW.glfwPollEvents();
 
-            // Swaps the back buffer with the front buffer.
-            // Shows what was just rendered on the screen (prevents flickering).
             GLFW.glfwSwapBuffers(window);
         }
 
-        // "Destroys" window and frees resources
         GLFW.glfwDestroyWindow(window);
-
-        // Properly shuts down GLFW and frees resources.
         GLFW.glfwTerminate();
     }
+
+    private float[] rotateTriangles(float[] vertices, float angle) {
+
+        float rad = (float)Math.toRadians(angle);
+        float cos = (float)Math.cos(rad);
+        float sin = (float)Math.sin(rad);
+
+        float[] rotated = new float[vertices.length];
+
+        for (int i = 0; i < vertices.length; i += 3) {
+
+            float x = vertices[i];
+            float y = vertices[i + 1];
+            float z = vertices[i + 2];
+
+            rotated[i]     = x * cos - y * sin;
+            rotated[i + 1] = x * sin + y * cos;
+            rotated[i + 2] = z; // unchanged
+        }
+
+        return rotated;
+    }
+
 }

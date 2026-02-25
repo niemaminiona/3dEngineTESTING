@@ -6,7 +6,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
-public class Launcher implements Runnable {
+public class TestLauncher implements Runnable {
     @Override
     public void run() {
         int windowWidth = 1600;
