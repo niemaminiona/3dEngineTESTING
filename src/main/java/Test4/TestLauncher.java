@@ -1,5 +1,6 @@
 package Test4;
 
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -36,28 +37,14 @@ public class TestLauncher implements Runnable {
         GLFW.glfwMakeContextCurrent(window);
         GL.createCapabilities();
 
-        float size = 0.1f;
-
-        float[] vertices = new float[]{
-                -size,size, 0,  // Top left      0
-                size, size, 0,  // Top right     1
-                size,-size, 0,  // Bottom right  2
-                -size,-size,0,  // Bottom left   3
-
-                -size,size, 0,  // Top left      4
-                size, size, 0,  // Top right     5
-                size,-size, 0,  // Bottom right  6
-                -size,-size,0,  // Bottom left   7
-        };
-
-        int[] indices = new int[]{
-                0, 1, 2,
-                2, 3, 0,
-        };
-
-        Model model = new Model(vertices, indices);
+        Model model = getModel();
 
         Shader shader = new Shader("shader2");
+
+        Matrix4f projection = new Matrix4f()
+                .ortho2D((float) -windowWidth /2, (float) windowWidth /2, (float) -windowHeight /2, (float) windowHeight /2)
+                .scale(256).scale(4)
+                ;
 
         GLFW.glfwShowWindow(window);
 
@@ -76,23 +63,14 @@ public class TestLauncher implements Runnable {
         float greenChange = 0.01f;
 
         while(!GLFW.glfwWindowShouldClose(window)){
+            GLFW.glfwPollEvents();
+
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-            model.setVertices(rotateTriangles(vertices, angle));
-
-            angle += 0.25f;
-            green += greenChange;
-            if(green <= 0f || green >= 1f ){
-                greenChange *= -1;
-            }
-
             shader.bind();
-            shader.setUniform("red", 1);
-            shader.setUniform("green", green);
-
+            shader.setUniformFloat("red", 1);
+            shader.setUniformMatrix4f("projection", projection);
             model.render();
-
-            GLFW.glfwPollEvents();
 
             GLFW.glfwSwapBuffers(window);
         }
@@ -101,26 +79,24 @@ public class TestLauncher implements Runnable {
         GLFW.glfwTerminate();
     }
 
-    private float[] rotateTriangles(float[] vertices, float angle) {
+    private static Model getModel() {
+        float size = 0.1f;
 
-        float rad = (float)Math.toRadians(angle);
-        float cos = (float)Math.cos(rad);
-        float sin = (float)Math.sin(rad);
+        float[] vertices = new float[]{
+                -size,size, 0,  // Top left      0
+                size, size, 0,  // Top right     1
+                size,-size, 0,  // Bottom right  2
+                -size,-size,0,  // Bottom left   3
+                5*size,size,0,
+                size,5*size,0
+        };
 
-        float[] rotated = new float[vertices.length];
+        int[] indices = new int[]{
+                0, 1, 5,
+                2, 3, 0,
+                4, 2, 1
+        };
 
-        for (int i = 0; i < vertices.length; i += 3) {
-
-            float x = vertices[i];
-            float y = vertices[i + 1];
-            float z = vertices[i + 2];
-
-            rotated[i]     = x * cos - y * sin;
-            rotated[i + 1] = x * sin + y * cos;
-            rotated[i + 2] = z; // unchanged
-        }
-
-        return rotated;
+        return new Model(vertices, indices);
     }
-
 }
