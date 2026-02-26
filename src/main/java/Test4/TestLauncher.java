@@ -1,6 +1,8 @@
 package Test4;
 
+import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -46,6 +48,22 @@ public class TestLauncher implements Runnable {
                 .scale(256).scale(4)
                 ;
 
+        float distanceBetween = 0.1f;
+
+        Matrix4f Object1 = new Matrix4f()
+                .scale(1f, 0.5f, 1f)
+                .translate(new Vector3f(0,-distanceBetween,0))
+                ;
+
+        Matrix4f Object2 = new Matrix4f()
+                .scale(1f, 0.5f, 1f)
+                ;
+
+        Matrix4f Object3 = new Matrix4f()
+                .scale(1f, 0.5f, 1f)
+                .translate(new Vector3f(0,distanceBetween,0))
+                ;
+
         GLFW.glfwShowWindow(window);
 
         // Enable v-Sync
@@ -58,9 +76,7 @@ public class TestLauncher implements Runnable {
             }
         });
 
-        float angle = 0;
-        float green = 0.01f;
-        float greenChange = 0.01f;
+        float angle = 0.1f;
 
         while(!GLFW.glfwWindowShouldClose(window)){
             GLFW.glfwPollEvents();
@@ -68,8 +84,23 @@ public class TestLauncher implements Runnable {
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
             shader.bind();
-            shader.setUniformFloat("red", 1);
+
             shader.setUniformMatrix4f("projection", projection);
+            shader.quickShaderRGB(0,0,1);
+            Object1.rotate((float) Math.toRadians(angle), 0,0,1f);
+
+            shader.setUniformMatrix4f("model", Object1);
+            model.render();
+
+            Object2.rotate((float) Math.toRadians(-angle), 0, 0, 1);
+            shader.quickShaderRGB(0,1,0);
+            shader.setUniformMatrix4f("model", Object2);
+            model.render();
+
+            Object3.rotate((float) Math.toRadians(angle), 0, 0, 1);
+
+            shader.quickShaderRGB(1,0,0);
+            shader.setUniformMatrix4f("model", Object3);
             model.render();
 
             GLFW.glfwSwapBuffers(window);
@@ -87,16 +118,14 @@ public class TestLauncher implements Runnable {
                 size, size, 0,  // Top right     1
                 size,-size, 0,  // Bottom right  2
                 -size,-size,0,  // Bottom left   3
-                5*size,size,0,
-                size,5*size,0
         };
 
         int[] indices = new int[]{
-                0, 1, 5,
-                2, 3, 0,
-                4, 2, 1
+                0,1,2,
+                2,3,0
         };
 
         return new Model(vertices, indices);
     }
+
 }

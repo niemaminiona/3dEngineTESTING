@@ -82,6 +82,12 @@ public class Shader {
         }
     }
 
+    public void quickShaderRGB(float red, float green, float blue){
+        setUniformFloat("red", red);
+        setUniformFloat("green", green);
+        setUniformFloat("blue", blue);
+    }
+
 
     private String readFile(String filename){
         StringBuilder string = new StringBuilder();
