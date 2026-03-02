@@ -42,8 +42,9 @@ public class TestLauncher implements Runnable {
 
         Shader shader = new Shader("shader2");
 
-        Matrix4f projection = new Matrix4f()
-                .ortho2D((float) -windowWidth /2, (float) windowWidth /2, (float) -windowHeight /2, (float) windowHeight /2)
+        Camera camera = new Camera(windowWidth, windowHeight);
+
+        Matrix4f scale = new Matrix4f()
                 .scale(256).scale(4);
 
         Matrix4f Object1 = new Matrix4f()
@@ -69,7 +70,7 @@ public class TestLauncher implements Runnable {
 
             shader.bind();
 
-            shader.setUniformMatrix4f("projection", projection);
+            shader.setUniformMatrix4f("projection", camera.getProjection().mul(scale));
             shader.quickShaderRGB(1,0,0);
             shader.setUniformMatrix4f("model", new Matrix4f());
 
