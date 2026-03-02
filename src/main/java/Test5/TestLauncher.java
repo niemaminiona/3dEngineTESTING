@@ -1,4 +1,4 @@
-package Test4;
+package Test5;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -46,18 +46,9 @@ public class TestLauncher implements Runnable {
                 .ortho2D((float) -windowWidth /2, (float) windowWidth /2, (float) -windowHeight /2, (float) windowHeight /2)
                 .scale(256).scale(4);
 
-        float distanceBetween = 0.1f;
-
         Matrix4f Object1 = new Matrix4f()
-                .scale(1f, 0.5f, 1f)
-                .translate(new Vector3f(0,-distanceBetween,0));
-
-        Matrix4f Object2 = new Matrix4f()
-                .scale(1f, 0.5f, 1f);
-
-        Matrix4f Object3 = new Matrix4f()
-                .scale(1f, 0.5f, 1f)
-                .translate(new Vector3f(0,distanceBetween,0));
+                .scale(1)
+                .translate(new Vector3f(0,0,0));
 
         GLFW.glfwShowWindow(window);
 
@@ -71,8 +62,6 @@ public class TestLauncher implements Runnable {
             }
         });
 
-        float angle = 0.2f;
-
         while(!GLFW.glfwWindowShouldClose(window)){
             GLFW.glfwPollEvents();
 
@@ -81,20 +70,9 @@ public class TestLauncher implements Runnable {
             shader.bind();
 
             shader.setUniformMatrix4f("projection", projection);
-
-            Object1.rotate((float) Math.toRadians(angle), 0,0,1f);
-            shader.quickShaderRGB(0,0,1);
-            shader.setUniformMatrix4f("model", Object1);
-            model.render();
-
-            Object2.rotate((float) Math.toRadians(-angle), 0, 0, 1);
-            shader.quickShaderRGB(0,1,0);
-            shader.setUniformMatrix4f("model", Object2);
-            model.render();
-
-            Object3.rotate((float) Math.toRadians(angle), 0, 0, 1);
             shader.quickShaderRGB(1,0,0);
-            shader.setUniformMatrix4f("model", Object3);
+            shader.setUniformMatrix4f("model", new Matrix4f());
+
             model.render();
 
             GLFW.glfwSwapBuffers(window);
